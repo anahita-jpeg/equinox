@@ -34,7 +34,7 @@ export const sendSignUpEmail = inngest.createFunction(
 
         await step.run('send-welcome-email', async () => {
             const part = response.candidates?.[0]?.content?.parts?.[0];
-            const introText = (part && 'text' in part ? part.text : null) ||'Thanks for joining Signalist. You now have the tools to track markets and make smarter moves.'
+            const introText = (part && 'text' in part ? part.text : null) ||'Thanks for joining Equinox. You now have the tools to track markets and make smarter moves.'
 
             const { data: { email, name } } = event;
 
@@ -59,8 +59,8 @@ export const sendDailyNewsSummary = inngest.createFunction(
 
         // Step #2: For each user, get watchlist symbols -> fetch news (fallback to general)
         const results = await step.run('fetch-user-news', async () => {
-            const perUser: Array<{ user: UserForNewsEmail; articles: MarketNewsArticle[] }> = [];
-            for (const user of users as UserForNewsEmail[]) {
+            const perUser: Array<{ user: any; articles: MarketNewsArticle[] }> = [];
+            for (const user of users as any[]) {
                 try {
                     const symbols = await getWatchlistSymbolsByEmail(user.email);
                     let articles = await getNews(symbols);
@@ -81,7 +81,7 @@ export const sendDailyNewsSummary = inngest.createFunction(
         });
 
         // Step #3: (placeholder) Summarize news via AI
-        const userNewsSummaries: { user: UserForNewsEmail; newsContent: string | null }[] = [];
+        const userNewsSummaries: { user: any; newsContent: string | null }[] = [];
 
         for (const { user, articles } of results) {
                 try {

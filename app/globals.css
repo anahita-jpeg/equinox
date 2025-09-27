@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+/* Removed invalid @custom-variant dark (&:is(.dark *)); */
 
 @theme inline {
   --color-background: var(--background);
@@ -184,6 +184,18 @@
   }
   .auth-dashboard-preview {
     @apply border-6 border-gray-800 left-0 hidden w-[1024px] h-auto max-w-none lg:block rounded-xl shadow-2xl;
+  }
+  .auth-layout-centered {
+    @apply flex items-center justify-center min-h-screen bg-gray-900;
+  }
+  .auth-centered-section {
+    @apply w-full max-w-md px-6 py-12;
+  }
+  .auth-logo-centered {
+    @apply flex justify-center mb-12;
+  }
+  .auth-form-container {
+    @apply w-full;
   }
   .form-title {
     @apply text-4xl font-bold text-gray-400 mb-10;
