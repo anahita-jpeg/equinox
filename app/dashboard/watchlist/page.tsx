@@ -107,7 +107,7 @@ export default function WatchlistPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {watchlist.map((item) => (
           <Link 
-            href={`/stocks/${item.symbol}`} 
+            href={`/dashboard/stocks/${item.symbol}`} 
             key={item._id}
             className="watchlist-grid-item"
           >

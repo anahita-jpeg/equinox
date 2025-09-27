@@ -100,7 +100,7 @@ export async function addToWatchlist(symbol: string, company: string) {
     });
 
     // Revalidate the watchlist page
-    revalidatePath('/watchlist');
+    revalidatePath('/dashboard/watchlist');
     
     return { success: true, message: 'Added to watchlist' };
   } catch (error) {
@@ -122,7 +122,7 @@ export async function removeFromWatchlist(symbol: string) {
     await Watchlist.findOneAndDelete({ userId, symbol });
 
     // Revalidate the watchlist page
-    revalidatePath('/watchlist');
+    revalidatePath('/dashboard/watchlist');
     
     return { success: true, message: 'Removed from watchlist' };
   } catch (error) {
