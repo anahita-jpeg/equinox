@@ -31,10 +31,16 @@ const SignUp = () => {
         mode: 'onBlur'
     }, );
 
+    // Define the expected return type for signUpWithEmail
+    type SignUpResult = {
+        success: boolean;
+        [key: string]: any; // Add more fields as needed
+    };
+
     const onSubmit = async (data: SignUpFormData) => {
         try {
-            const result = await signUpWithEmail(data);
-            if(result.success) router.push('/');
+            const result: SignUpResult = await signUpWithEmail(data);
+            if(result.success) router.push('/dashboard');
         } catch (e) {
             console.error(e);
             toast.error('Sign up failed', {
@@ -66,7 +72,7 @@ const SignUp = () => {
                 <InputField
                     name="email"
                     label="Email"
-                    placeholder="contact@jsmastery.com"
+                    placeholder="contact@equinox.com"
                     register={register}
                     error={errors.email}
                     validation={{ 

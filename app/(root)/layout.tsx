@@ -22,6 +22,7 @@ const Layout = async ({ children }: { children : React.ReactNode }) => {
             <main className="min-h-screen text-gray-400">
                 <Header user={user} />
 
+<<<<<<< HEAD
                 <div className="container py-10">
                     {children}
                 </div>
@@ -31,6 +32,12 @@ const Layout = async ({ children }: { children : React.ReactNode }) => {
                 <ChatToggleButton />
             </main>
         </ChatProvider>
+=======
+            <div className="container py-10">
+            {children}
+            </div>
+        </main>
+>>>>>>> 93909610b785f08750a095ba6e08d50ea0d2b35e
     )
 }
 export default Layout

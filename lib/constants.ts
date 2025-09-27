@@ -1,7 +1,7 @@
 export const NAV_ITEMS = [
-    { href: '/', label: 'Dashboard' },
+    { href: '/dashboard', label: 'Dashboard' },
     { href: '/search', label: 'Search' },
-    { href: '/watchlist', label: 'Watchlist' },
+    { href: '/dashboard/watchlist', label: 'Watchlist' },
 ];
 
 // Sign-up form select options
