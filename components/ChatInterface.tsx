@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send, Bot, User } from 'lucide-react';
 import { useChat } from './ChatProvider';
 
@@ -15,11 +14,18 @@ export function ChatInterface() {
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Small delay to ensure DOM is updated
+    const timeoutId = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
   }, [messages, isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,7 +57,10 @@ export function ChatInterface() {
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col p-0">
-        <ScrollArea className="flex-1 px-4">
+        <div 
+          className="flex-1 overflow-y-auto px-4 scrollbar-hide-default" 
+          style={{ maxHeight: 'calc(100vh - 200px)' }}
+        >
           <div className="space-y-4 py-4">
             {messages.length === 0 ? (
               <div className="text-center text-gray-500 py-8">
@@ -155,7 +164,7 @@ export function ChatInterface() {
             {/* Scroll anchor */}
             <div ref={messagesEndRef} />
           </div>
-        </ScrollArea>
+        </div>
         
         <div className="border-t border-gray-800 p-4">
           <form onSubmit={handleSubmit} className="flex gap-2">

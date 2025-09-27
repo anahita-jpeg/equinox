@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { HumanMessage, AIMessage } from '@langchain/core/messages';
+import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
 import { createConversation, streamConversation } from '@/lib/agent';
 import { auth } from '@/lib/better-auth/auth';
 import { headers } from 'next/headers';
@@ -29,6 +29,20 @@ export async function POST(request: NextRequest) {
           messages.push(new AIMessage(msg.content));
         }
       }
+    }
+
+    // Add user context to the system message
+    const userContext = `Current user information:
+- User ID: ${session.user.id}
+- User Email: ${session.user.email}
+- User Name: ${session.user.name}
+
+When accessing the user's watchlist, use the get_user_watchlist tool with userId: "${session.user.id}"`;
+
+    // Add system message with user context if not already present
+    const hasSystemMessage = messages.some(msg => msg instanceof SystemMessage);
+    if (!hasSystemMessage) {
+      messages.unshift(new SystemMessage(userContext));
     }
 
     // Add the current user message

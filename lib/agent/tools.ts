@@ -1,12 +1,14 @@
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
 import FirecrawlApp from '@mendable/firecrawl-js';
-import { getWatchlistSymbolsByEmail, getUserWatchlist } from '@/lib/actions/watchlist.actions';
+import { getWatchlistSymbolsByEmail } from '@/lib/actions/watchlist.actions';
 import { getStockProfile, getNews, getStockQuote } from '@/lib/actions/finnhub.actions';
+import { connectToDatabase } from '@/database/mongoose';
+import { Watchlist } from '@/database/models/watchlist.model';
 
 // Tool to get user's watchlist
 export const getUserWatchlistTool = tool(
-  async ({ email }: { email?: string }) => {
+  async ({ userId, email }: { userId?: string; email?: string }) => {
     try {
       if (email) {
         const symbols = await getWatchlistSymbolsByEmail(email);
@@ -15,12 +17,28 @@ export const getUserWatchlistTool = tool(
           symbols,
           message: `Found ${symbols.length} symbols in watchlist: ${symbols.join(', ')}`
         };
-      } else {
-        const watchlist = await getUserWatchlist();
+      } else if (userId) {
+        // Get watchlist by userId directly
+        await connectToDatabase();
+        const watchlistItems = await Watchlist.find({ userId }).sort({ addedAt: -1 }).lean();
+        
+        const stocks = watchlistItems.map((item) => ({
+          userId: String(item.userId),
+          symbol: String(item.symbol),
+          company: String(item.company || ''),
+          addedAt: item.addedAt
+        }));
+        
         return {
           success: true,
-          watchlist,
-          message: `Retrieved ${watchlist.length} items from user's watchlist`
+          watchlist: stocks,
+          message: `Retrieved ${stocks.length} items from user's watchlist`
+        };
+      } else {
+        return {
+          success: false,
+          error: 'No user identification provided',
+          message: 'Failed to retrieve watchlist - no user ID or email provided'
         };
       }
     } catch (error) {
@@ -33,9 +51,10 @@ export const getUserWatchlistTool = tool(
   },
   {
     name: 'get_user_watchlist',
-    description: 'Get the current user\'s stock watchlist. Can retrieve by email or current session.',
+    description: 'Get the current user\'s stock watchlist. Requires userId or email to identify the user.',
     schema: z.object({
-      email: z.string().optional().describe('User email to get watchlist for (optional)')
+      userId: z.string().optional().describe('User ID to get watchlist for'),
+      email: z.string().optional().describe('User email to get watchlist for (alternative to userId)')
     })
   }
 );
