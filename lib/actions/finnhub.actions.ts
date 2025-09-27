@@ -38,6 +38,22 @@ export async function getStockProfile(symbol: string) {
   }
 }
 
+export async function getStockQuote(symbol: string) {
+  try {
+    const token = process.env.FINNHUB_API_KEY ?? NEXT_PUBLIC_FINNHUB_API_KEY;
+    if (!token) {
+      throw new Error('FINNHUB API key is not configured');
+    }
+
+    const url = `${FINNHUB_BASE_URL}/quote?symbol=${encodeURIComponent(symbol)}&token=${token}`;
+    // Revalidate every 5 minutes for stock quotes
+    return await fetchJSON(url, 300);
+  } catch (error) {
+    console.error(`Error fetching stock quote for ${symbol}:`, error);
+    return null;
+  }
+}
+
 export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
   try {
     const range = getDateRange(5);
