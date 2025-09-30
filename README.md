@@ -1,4 +1,4 @@
-# 🌅 Equinox
+#  Equinox
 
 **AI-Powered Stock Market Intelligence Platform**
 
