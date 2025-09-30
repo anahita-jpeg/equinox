@@ -96,32 +96,117 @@ Equinox democratizes access to professional-grade financial analysis tools, maki
 
 ```mermaid
 graph TB
-    A[User Interface] --> B[Next.js Frontend]
-    B --> C[API Routes]
-    C --> D[Better Auth]
-    C --> E[AI Agent]
-    C --> F[Database Layer]
+    subgraph "Environment Variables"
+        ENV1[MONGODB_URI]
+        ENV2[GOOGLE_API_KEY]
+        ENV3[FINNHUB_API_KEY]
+        ENV4[FIRECRAWL_API_KEY]
+        ENV5[BETTER_AUTH_SECRET]
+    end
     
-    E --> G[Google Gemini]
-    E --> H[LangGraph]
-    E --> I[Custom Tools]
+    subgraph "Frontend (Next.js 15)"
+        UI1[Chat System]
+        UI2[Pages: Dashboard, Watchlist, Sign-in/up]
+        UI3[UI: Tailwind + Shadcn/ui]
+        UI4[ChatToggleBtn, ChatSidebar, ChatProvider, ChatInterface]
+    end
     
-    I --> J[Finnhub API]
-    I --> K[Firecrawl]
-    I --> L[MongoDB]
+    subgraph "Backend (API & Server Actions)"
+        API1["/api/chat"]
+        API2["/api/inngest"]
+        API3[Auth Endpoints]
+        MID1[Request Processing]
+        MID2[Auth Middleware]
+        SA1[Stock Data Actions]
+        SA2[User Mgmt Actions]
+    end
     
-    F --> L
-    D --> L
+    subgraph "AI Assistant System"
+        AGENT[LangGraph Agent StateGraph]
+        GEMINI[Google Gemini 2.0 Flash API]
+        TOOLS[AI Tools:<br/>Market News, Stock Profile, Real-time Quotes]
+        CAPS[Capabilities:<br/>Web Scraping, Watchlist Analysis, Portfolio Insights]
+    end
     
-    M[Inngest] --> N[Background Jobs]
-    N --> O[Email Service]
-    N --> P[News Processing]
+    subgraph "Authentication System"
+        AUTH[Better Auth auth.ts]
+        SESS[Session Mgmt]
+    end
     
-    Q[TradingView] --> B
+    subgraph "Database Layer"
+        MONGOOSE[Mongoose mongoose.ts]
+        ADAPTER[Better Auth Adapter]
+        ATLAS[MongoDB Atlas]
+    end
     
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style E fill:#bbf,stroke:#333,stroke-width:2px
-    style L fill:#bfb,stroke:#333,stroke-width:2px
+    subgraph "External APIs & Services"
+        GAPI[Google Gemini API]
+        FCRAWL[Firecrawl API]
+        INNGEST[Inngest]
+        FINNHUB[Finnhub API]
+    end
+    
+    subgraph "Deployment & Infrastructure"
+        VERCEL[Vercel Platform]
+        FILE_STRUCT[File Structure:<br/>app/, components/, lib/, database/]
+    end
+    
+    %% Frontend to Backend connections
+    UI1 --> API1
+    UI2 --> API3
+    UI3 --> MID1
+    UI4 --> API1
+    
+    %% Backend internal connections
+    API1 --> AGENT
+    API2 --> INNGEST
+    API3 --> AUTH
+    MID1 --> MID2
+    MID2 --> SESS
+    SA1 --> MONGOOSE
+    SA2 --> MONGOOSE
+    
+    %% AI System connections
+    AGENT --> GEMINI
+    AGENT --> TOOLS
+    TOOLS --> CAPS
+    CAPS --> FINNHUB
+    CAPS --> FCRAWL
+    CAPS --> ATLAS
+    
+    %% Authentication connections
+    AUTH --> ADAPTER
+    ADAPTER --> ATLAS
+    SESS --> ATLAS
+    
+    %% Database connections
+    MONGOOSE --> ATLAS
+    
+    %% External API connections
+    GAPI --> AGENT
+    FCRAWL --> CAPS
+    FINNHUB --> CAPS
+    INNGEST --> VERCEL
+    
+    %% Environment variable connections
+    ENV1 --> ATLAS
+    ENV2 --> GEMINI
+    ENV3 --> FINNHUB
+    ENV4 --> FCRAWL
+    ENV5 --> AUTH
+    
+    %% Deployment connections
+    VERCEL --> API1
+    VERCEL --> API2
+    VERCEL --> API3
+    VERCEL --> FILE_STRUCT
+    
+    %% Styling
+    style UI1 fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style AGENT fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style ATLAS fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    style GEMINI fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style VERCEL fill:#fce4ec,stroke:#880e4f,stroke-width:2px
 ```
 
 ### Key Components
